@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CyberCipher - Enhanced Hacker Interface</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Share+Tech+Mono&display=swap');
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Share Tech Mono', monospace;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #0d0d2b 100%);
+    min-height: 100vh;
+    color: #00ff88;
+    padding: 1rem;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .cyber-container {
+    max-width: 480px;
+    margin: 3rem auto;
+    background: rgba(10, 10, 20, 0.95);
+    border: 2px solid #00ff88;
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+    padding: 1.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+    z-index: 10;
+  }
+
+  .cyber-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff00ff, #00ff88, #00ffff);
+    animation: scanline 3s linear infinite;
+  }
+
+  @keyframes scanline {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  .header-section {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+    padding-bottom: 0.8rem;
+  }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    color: #00ff88;
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+    margin-bottom: 0.3rem;
+    letter-spacing: 1.5px;
+  }
+
+  .subtitle {
+    color: #00ffff;
+    font-size: 0.95rem;
+  }
+
+  .input-section {
+    background: rgba(20, 20, 40, 0.7);
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 136, 0.25);
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #00ffff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+  }
+
+  select, input[type="number"], textarea {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid #00ff88;
+    border-radius: 6px;
+    color: #00ff88;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+  }
+
+  select:focus, input[type="number"]:focus, textarea:focus {
+    outline: none;
+    border-color: #00ffff;
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.4);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 90px;
+  }
+
+  .cyber-button {
+    background: linear-gradient(135deg, #00ff88, #00cc66);
+    color: #0a0a1a;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cyber-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+  }
+
+  .cyber-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .cyber-button:hover::before {
+    left: 100%;
+  }
+
+  .output-section {
+    margin-top: 1.5rem;
+    background: rgba(20, 20, 40, 0.7);
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 0, 255, 0.25);
+  }
+
+  .output-label {
+    color: #ff00ff;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+  }
+
+  #output {
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid #ff00ff;
+    border-radius: 6px;
+    padding: 0.8rem;
+    color: #ff00ff;
+    min-height: 60px;
+    font-family: 'Share Tech Mono', monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-y: auto;
+    max-height: 150px;
+    font-size: 0.9rem;
+  }
+
+  /* Hacker stickers/images outside container */
+  .sticker {
+    position: fixed;
+    width: 70px;
+    height: 70px;
+    opacity: 0.75;
+    filter: drop-shadow(0 0 3px #00ff88);
+    transition: all 0.4s ease;
+    cursor: default;
+    user-select: none;
+    z-index: 5;
+  }
+  
+  .sticker:hover {
+    transform: scale(1.4) rotate(15deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 8px #00ff88) brightness(1.3);
+  }
+  
+  /* Strategic placement of stickers */
+  .sticker1 {
+    top: 10%;
+    left: 5%;
+  }
+
+  .sticker2 {
+    top: 10%;
+    right: 5%;
+  }
+
+  .sticker3 {
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+  }
+
+  .sticker4 {
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+  }
+
+  .sticker5 {
+    bottom: 10%;
+    left: 5%;
+  }
+
+  .sticker6 {
+    bottom: 10%;
+    right: 5%;
+  }
+
+  .sticker7 {
+    top: 25%;
+    left: 2%;
+  }
+
+  .sticker8 {
+    top: 25%;
+    right: 2%;
+  }
+
+  .sticker9 {
+    bottom: 25%;
+    left: 2%;
+  }
+
+  .sticker10 {
+    bottom: 25%;
+    right: 2%;
+  }
+
+  .sticker11 {
+    top: 15%;
+    left: 15%;
+  }
+
+  .sticker12 {
+    top: 15%;
+    right: 15%;
+  }
+
+  .sticker13 {
+    bottom: 15%;
+    left: 15%;
+  }
+
+  .sticker14 {
+    bottom: 15%;
+    right: 15%;
+  }
+
+  /* Additional decorative elements */
+  .glow-dot {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00ff88;
+    box-shadow: 0 0 8px 2px #00ff88;
+    animation: pulse 3s infinite alternate;
+    z-index: 2;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 0.3; transform: scale(1); }
+    100% { opacity: 0.7; transform: scale(1.4); }
+  }
+  
+  .dot1 { top: 20%; left: 12%; }
+  .dot2 { top: 20%; right: 12%; }
+  .dot3 { bottom: 25%; left: 12%; }
+  .dot4 { bottom: 25%; right: 12%; }
+  .dot5 { top: 65%; left: 10%; }
+  .dot6 { top: 65%; right: 10%; }
+
+  /* Binary rain background */
+  .binary-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    opacity: 0.1;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .binary-digit {
+    position: absolute;
+    color: #00ff88;
+    font-size: 12px;
+    animation: fall 10s linear infinite;
+  }
+
+  @keyframes fall {
+    0% { transform: translateY(-100px); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+  }
+
+  @media (max-width: 640px) {
+    .cyber-container {
+      max-width: 90vw;
+      margin: 2rem auto;
+      padding: 1rem 1.2rem;
+    }
+    .sticker, .glow-dot {
+      display: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="binary-background" id="binaryRain"></div>
+
+<!-- Decorative glow dots -->
+<div class="glow-dot dot1"></div>
+<div class="glow-dot dot2"></div>
+<div class="glow-dot dot3"></div>
+<div class="glow-dot dot4"></div>
+<div class="glow-dot dot5"></div>
+<div class="glow-dot dot6"></div>
+
+<!-- Hacker stickers with strategic placement -->
+<img src="https://img.icons8.com/ios-filled/100/00ff88/hacker.png" alt="Hacker icon" class="sticker sticker1" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/lock-2.png" alt="Lock icon" class="sticker sticker2" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/console.png" alt="Console icon" class="sticker sticker3" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/cyber-security.png" alt="Cyber security icon" class="sticker sticker4" />
+<img src="encrypt (2).png" alt="Encrypt icon" class="sticker sticker5" />
+<img src="decrypt.png" alt="Decrypt icon" class="sticker sticker6" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/security-configuration.png" alt="Security icon" class="sticker sticker7" />
+<img src="female.png" alt="Female hacker icon" class="sticker sticker8" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/console.png" alt="Terminal icon" class="sticker sticker9" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/shield.png" alt="Shield icon" class="sticker sticker10" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/key.png" alt="Key icon" class="sticker sticker11" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/wifi.png" alt="Network icon" class="sticker sticker12" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/bug.png" alt="Bug icon" class="sticker sticker13" />
+<img src="https://img.icons8.com/ios-filled/100/00ff88/visible--v1.png" alt="Eye icon" class="sticker sticker14" />
+
+<div class="cyber-container" role="main" aria-label="CyberCipher Caesar cipher tool">
+  <div class="header-section">
+    <h1>CYBER CIPHER</h1>
+    <div class="subtitle">Advanced Caesar Cipher Encryption/Decryption</div>
+  </div>
+
+  <div class="input-section">
+    <div class="form-group">
+      <label for="mode">Operation Mode</label>
+      <select id="mode" aria-label="Select encrypt or decrypt mode">
+        <option value="E">Encrypt</option>
+        <option value="D">Decrypt</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="shift">Shift Value (1-25)</label>
+      <input type="number" id="shift" value="3" min="1" max="25" aria-label="Enter shift value" />
+    </div>
+
+    <div class="form-group">
+      <label for="text">Input Text</label>
+      <textarea id="text" placeholder="Enter your secret message here..." aria-label="Input text"></textarea>
+    </div>
+
+    <button class="cyber-button" onclick="processCipher()" aria-label="Execute cipher">Execute Cipher</button>
+  </div>
+
+  <div class="output-section" aria-live="polite" aria-atomic="true">
+    <div class="output-label">Result</div>
+    <div id="output">Awaiting input...</div>
+  </div>
+</div>
+
+<script>
+function caesarCipher(mode, shift, text) {
+  if (mode === 'D' || mode === 'd') {
+    shift = -shift;
+  }
+  let nshift = ((shift % 26) + 26) % 26;
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    let c = text[i];
+    if (c.match(/[a-zA-Z]/)) {
+      let base = (c === c.toUpperCase()) ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+      let pos = c.charCodeAt(0) - base;
+      let newPos = (pos + nshift) % 26;
+      out += String.fromCharCode(base + newPos);
+    } else {
+      out += c;
+    }
+  }
+  return out;
+}
+
+function processCipher() {
+  const mode = document.getElementById('mode').value;
+  const shiftInput = document.getElementById('shift');
+  const shift = parseInt(shiftInput.value, 10);
+  const text = document.getElementById('text').value.trim();
+
+  if (isNaN(shift) || shift < 1 || shift > 25) {
+    alert('Please enter a valid shift number between 1 and 25.');
+    shiftInput.focus();
+    return;
+  }
+  if (text.length === 0) {
+    alert('Please enter some text to convert.');
+    return;
+  }
+
+  const result = caesarCipher(mode, shift, text);
+  document.getElementById('output').textContent = result;
+}
+
+// Binary rain effect for background
+const binaryRainContainer = document.getElementById('binaryRain');
+const binaryChars = ['0', '1'];
+const maxDigits = 50;
+
+function createBinaryDigit() {
+  const digit = document.createElement('div');
+  digit.classList.add('binary-digit');
+  digit.textContent = binaryChars[Math.floor(Math.random() * binaryChars.length)];
+  digit.style.left = Math.random() * 100 + 'vw';
+  digit.style.fontSize = (Math.random() * 12 + 10) + 'px';
+  digit.style.animationDuration = (Math.random() * 5 + 5) + 's';
+  digit.style.animationDelay = (Math.random() * 10) + 's';
+  binaryRainContainer.appendChild(digit);
+
+  digit.addEventListener('animationend', () => {
+    digit.remove();
+  });
+}
+
+// Create initial binary digits
+for (let i = 0; i < 20; i++) {
+  createBinaryDigit();
+}
+
+setInterval(() => {
+  if (binaryRainContainer.children.length < maxDigits) {
+    createBinaryDigit();
+  }
+}, 200);
+</script>
+
+</body>
+</html>
