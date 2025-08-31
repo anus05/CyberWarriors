@@ -330,6 +330,102 @@
     100% { transform: translateY(100vh); opacity: 0; }
   }
 
+  /* Scroll view additions */
+  #scrollProgress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, #ff00ff, #00ff88, #00ffff);
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.5);
+    z-index: 1000;
+  }
+
+  #backToTop {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    background: linear-gradient(135deg, #00ff88, #00ffff);
+    color: #0a0a1a;
+    border: 2px solid #00ff88;
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 16px rgba(0, 255, 136, 0.5);
+    z-index: 1000;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  #backToTop:hover { transform: translateY(-3px); box-shadow: 0 0 22px rgba(0,255,136,0.7); }
+
+  /* About section */
+  .about-section {
+    max-width: 700px;
+    margin: 2rem auto 0;
+    background: rgba(10, 10, 20, 0.9);
+    border: 2px solid rgba(0, 255, 136, 0.6);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 0 24px rgba(0, 255, 136, 0.25);
+    z-index: 10;
+  }
+  .about-title {
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffff;
+    text-align: center;
+    font-size: 1.3rem;
+    letter-spacing: 1.5px;
+    margin-bottom: 0.75rem;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+  }
+  .about-desc {
+    color: #9cfbe5;
+    text-align: center;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  .contributors {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .contrib {
+    background: rgba(20, 20, 40, 0.7);
+    border: 1px solid rgba(0, 255, 136, 0.35);
+    border-radius: 8px;
+    padding: 0.75rem;
+    text-align: center;
+    color: #00ff88;
+    text-shadow: 0 0 6px rgba(0, 255, 136, 0.4);
+  }
+
+  /* Footer */
+  .footer {
+    max-width: 900px;
+    margin: 2rem auto 0;
+    padding: 1rem 0.5rem 0.5rem;
+    text-align: center;
+    color: #00ffff;
+    border-top: 1px solid rgba(0,255,136,0.25);
+  }
+  .footer small { color: #9cfbe5; }
+
+  /* Custom scrollbars */
+  html { scrollbar-width: thin; scrollbar-color: #00ff88 rgba(0,0,0,0.35); }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: rgba(0,0,0,0.25); }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00ff88, #00ffff);
+    border-radius: 8px;
+    border: 2px solid rgba(10,10,20,0.9);
+  }
+
   @media (max-width: 640px) {
     .cyber-container {
       max-width: 90vw;
@@ -339,10 +435,19 @@
     .sticker, .glow-dot {
       display: none;
     }
+    .contributors { grid-template-columns: 1fr; }
+    .about-section { margin-top: 1.5rem; padding: 1rem; }
+  }
+
+  @media (min-width: 1024px) {
+    .cyber-container { max-width: 560px; }
+    .about-section { max-width: 780px; }
   }
 </style>
 </head>
 <body>
+
+<div id="scrollProgress" aria-hidden="true"></div>
 
 <div class="binary-background" id="binaryRain"></div>
 
@@ -403,6 +508,27 @@
     <div id="output">Awaiting input...</div>
   </div>
 </div>
+
+<!-- About Us Section -->
+<section class="about-section" id="about" aria-label="About Cyber Cipher contributors">
+  <h2 class="about-title">About Us</h2>
+  <p class="about-desc">Cyber Cipher was crafted by a squad of cyber enthusiasts,Named CyberWarriors. Meet the crew:</p>
+  <div class="contributors">
+    <div class="contrib">• Anusmita Ray Choudhuri</div>
+    <div class="contrib">• Anirban Ray</div>
+    <div class="contrib">• Ankan Ghosh</div>
+    <div class="contrib">• Ayan Ghosh</div>
+  </div>
+</section>
+
+<footer class="footer" role="contentinfo">
+  <div>
+    <strong>CYBER CIPHER</strong>
+  </div>
+  <small>© <span id="year"></span> Cyber Cipher. All rights reserved.</small>
+</footer>
+
+<button id="backToTop" aria-label="Back to top" title="Back to top">▲</button>
 
 <script>
 function caesarCipher(mode, shift, text) {
@@ -475,6 +601,27 @@ setInterval(() => {
     createBinaryDigit();
   }
 }, 200);
+
+// Scroll view logic: progress bar + back-to-top
+const progressBar = document.getElementById('scrollProgress');
+const backToTop = document.getElementById('backToTop');
+function updateScrollUI() {
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+  if (progressBar) progressBar.style.width = scrolled + '%';
+  if (backToTop) backToTop.style.display = scrollTop > 200 ? 'flex' : 'none';
+}
+window.addEventListener('scroll', updateScrollUI);
+window.addEventListener('resize', updateScrollUI);
+if (backToTop) {
+  backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+}
+updateScrollUI();
+
+// Footer year
+const yearEl = document.getElementById('year');
+if (yearEl) { yearEl.textContent = new Date().getFullYear(); }
 </script>
 
 </body>
